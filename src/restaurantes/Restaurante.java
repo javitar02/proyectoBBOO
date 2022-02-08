@@ -1,25 +1,25 @@
+//CLASE RESTAURANTE
 package restaurantes;
 
 import empleados.Empleado;
-
 import java.util.ArrayList;
-import java.util.Objects;
 
+    //ATRIBUTOS
 public class Restaurante{
     private ArrayList <Empleado> empleados;
     private ArrayList <Producto> productos;
     private String nombre;
-
+    //CONSTRUCTOR 1
     public Restaurante(){
         productos = new ArrayList<Producto>();
         empleados = new ArrayList<Empleado>();
     }
-
+    //CONSTRUCTOR 2
     public Restaurante(ArrayList <Producto> productos) {
         productos = new ArrayList<Producto>();
         empleados = new ArrayList<Empleado>();
     }
-
+    //CONSTRUCTOR 3
     public Restaurante(String nombre) {
         this.nombre = nombre;
         empleados = new ArrayList<Empleado>();
@@ -27,7 +27,7 @@ public class Restaurante{
     }
 
 
-
+    //GETTERS Y SETTERS
     public ArrayList<Empleado> getEmpleados() {
         return empleados;
     }
@@ -60,6 +60,7 @@ public class Restaurante{
         productos.add(p);
     }
 
+    //TO STRING
     @Override
     public String toString() {
         return "Restaurante " + nombre + " "

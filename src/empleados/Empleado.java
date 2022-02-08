@@ -1,15 +1,19 @@
+//CLASE EMPLEADO
 package empleados;
 
 import java.util.Objects;
 
+//ATRIBUTOS
 public class Empleado {
     private String nombre,ap1,ap2,dni;
     private Nomina nomina;
 
+    //CONSTRUCTOR 1
     public Empleado(String nombre) {
         this.nombre = nombre;
     }
 
+    //CONSTRUCTOR 2
     public Empleado(String nombre, String ap1, String ap2, String dni, Nomina nomina) {
         this.nombre = nombre;
         this.ap1 = ap1;
@@ -18,6 +22,7 @@ public class Empleado {
         this.nomina = nomina;
     }
 
+    //GETTERS Y SETTERS
     public String getNombre() {
         return nombre;
     }
@@ -58,6 +63,7 @@ public class Empleado {
         this.nomina = nomina;
     }
 
+    //EQUALS
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -66,6 +72,7 @@ public class Empleado {
         return Objects.equals(nombre, empleado.nombre) && Objects.equals(ap1, empleado.ap1) && Objects.equals(ap2, empleado.ap2) && Objects.equals(dni, empleado.dni) && Objects.equals(nomina, empleado.nomina);
     }
 
+    //TO STRING
     @Override
     public String toString() {
         return "Empleado->" +

@@ -1,14 +1,18 @@
+//CLASE NÓMINA
 package empleados;
 
+//ATRIBUTOS
 public class Nomina {
     private String iban;
     private double sueldo;
 
+    //CONSTRUCTOR
     public Nomina(String iban, double sueldo) {
         this.iban = iban;
         this.sueldo = sueldo;
     }
 
+    //GETTERS Y SETTERS
     public String getIban() {
         return iban;
     }
@@ -25,6 +29,7 @@ public class Nomina {
         this.sueldo = sueldo;
     }
 
+    //TO STRING
     @Override
     public String toString() {
         return "Nomina con iban "+iban+ " y saldo de "+sueldo+"€";
