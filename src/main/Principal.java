@@ -18,6 +18,7 @@ public class Principal {
     private static final String BD_RESTAURANTE = "bd_txt/restaurante.oo";
     private static final Scanner teclado = new Scanner(System.in);
 
+    //MAIN: EN ÉL SE ABRE LA BDAT, SE CIERRA Y SE SOLICITAN LAS OPCIONES QUE SERÁN TRATADAS
     public static void main(String[] args) {
         int opc;
         ObjectContainer db;
@@ -31,6 +32,8 @@ public class Principal {
         db.close();
     }
 
+    //MÉTODO ABRIR BD: SE CONFIGURA LA BD PARA QUE SE ACTUALICEN LOS CAMBIOS REALIZADOS
+    //MEDIANTE EL CASCADE ON UPDATE QUE SE PONE A VERDADERO
     private static ObjectContainer abrirBd() {
         EmbeddedConfiguration config = Db4oEmbedded.newConfiguration();
         config.common().objectClass(Restaurante.class).cascadeOnUpdate(true);
@@ -39,6 +42,8 @@ public class Principal {
         return Db4oEmbedded.openFile(config, BD_RESTAURANTE);
     }
 
+    //MÉTODO SOLICITAR OPCIÓN: PIDE AL USUARIO UNA OPCIÓN ENTRE 1 Y 9
+    //MEDIANTE UN BUCLE SE CONTROLA QUE EL MENÚ NO SE INTERRUMPA HASTA QUE EL USUARIO PULSE 9
     private static int solicitarOpcion() {
         int opc;
 
@@ -54,14 +59,13 @@ public class Principal {
         do {
             System.out.println("\nIntroduce una opcion:");
             opc = Integer.parseInt(teclado.nextLine());
-        } while (opc < 1 || opc > 10);
+        } while (opc < 1 || opc > 9);
         return opc;
     }
 
+    //MÉTODO TRATAR OPCIÓN: MEDIANTE UN SWITCH SE CONTROLA LA OPCIÓN DEL USUARIO
+    //SE LLAMA AL MÉTODO QUE CORRESPONDA
     private static void tratarOpcion(int opc, ObjectContainer db) {
-        int edad;
-        String dni;
-
         switch (opc) {
             case 1 -> insertarBarEjemplo(db);
             case 2 -> insertarRestaurante(db);
@@ -71,38 +75,17 @@ public class Principal {
             case 6 -> busquedaRestaurantePorNombre(db);
             case 7 -> busquedaEmpleadoPorNombre(db);
             case 8 -> busquedaEmpleadoPertenecientesAlMismoBarOrdenadosPorSalario(db);
-            case 9 -> consultarBD(db);
         }
     }
 
-    private static void consultarBD(ObjectContainer db) {
-        Restaurante patron = new Restaurante();
-        ObjectSet<Restaurante> os = db.queryByExample(patron);
-
-        for (Restaurante r : os) {
-            System.out.println(r);
-        }
-    }
-
-    private static boolean contieneEsteNombre(ObjectContainer db, String nombre) {
-        boolean contieneNombre = false;
-
-        ObjectSet<Restaurante> os = db.queryByExample(new Restaurante(""));
-        for (Restaurante r : os) {
-            if (r.getNombre().contains(nombre)) {
-                contieneNombre = true;
-            }
-        }
-        return contieneNombre;
-    }
-
-
+    //MÉTODO SOLICITAR CADENA: PIDE AL USUARIO UNA CADENA POR TECLADO Y LA DEVUELVE
     private static String solicitarCadena(String msg) {
         System.out.println(msg);
 
         return teclado.nextLine();
     }
 
+    //MÉTODO SOLICITAR CANTIDAD DOBLE: PIDE AL USUARIO UN NÚMERO TIPO DOUBLE POR TECLADO Y LO DEVUELVE
     private static double solicitarCantidadDoble(String msg) {
         double cantidad;
 
@@ -112,6 +95,7 @@ public class Principal {
         return cantidad;
     }
 
+    //MÉTODO SOLICITAR CANTIDAD ENTERA: PIDE AL USUARIO UN NÚMERO TIPO ENTERO POR TECLADO Y LO DEVUELVE
     private static int solicitarCantidadEntera(String msg) {
         int cantidad;
 
@@ -121,6 +105,9 @@ public class Principal {
         return cantidad;
     }
 
+    //MÉTODO SOLICITAR CATEGORÍA: PIDE AL USUARIO UNA CATEGORÍA Y LA DEVUELVE
+    //MEDIANTE UN BUCLE SE CONTROLA QUE EL USUARIO SIEMPRE INTRODUZCA UNA CATEGORÍA DISPONIBLE
+    //MEDIANTE UN SWITCH SE INTERPRETA LA CATEGORÍA DEL PRODUCTO (OP1-BEBIDA, OP2-COMIDA, OP3-POSTRE)
     private static Categoria solicitarCategoria() {
         int opt;
         Categoria c = null;
@@ -139,6 +126,10 @@ public class Principal {
         return c;
     }
 
+    //MÉTODO INSERTA BAR EJEMPLO: SE CREAN E INSTANCIAN LOS OBJETOS NECESARIOS PARA INSERTAR EL BAR DE EJEMPLO
+    //CREAMOS UN OBJETO RESTAURANTE, UN EMPLEADO Y VARIOS PRODUCTOS
+    //AL AÑADIR AMBOS AL RESTAURANTE, SE VAN SUMANDO A UN ARRAY QUE CONTIENE LA CLASE RESTAURANTE
+    //UNA VEZ ESTÉ CREADO EL RESTAURANTE, SE HACE EL STORE PARA QUE SE GUARDE EN LA BD
     private static void insertarBarEjemplo(ObjectContainer db) {
         Restaurante restaurante = new Restaurante("RestAccdat");
         ObjectSet<Restaurante> os = db.queryByExample(restaurante);
@@ -166,6 +157,9 @@ public class Principal {
         }
     }
 
+    //MÉTODO INSERTAR RESTAURANTE: SOLICITA EL NOMBRE E INSERTA EL RESTAURANTE CON SUS EMPLEADOS
+    //SE CONTROLA QUE EL RESTAURANTE NO EXISTA, EN CUYO CASO SE MOSTRARÁ MENSAJE DE ERROR
+    //MEDIANTE UN BUCLE INTERACTIVO, SE CONTROLA QUE EL USUARIO INTRODUZCA EMPLEADOS HASTA QUE QUIERA
     private static void insertarRestaurante(ObjectContainer db) {
         String nombre = solicitarCadena("Introduce el nombre del restaurante: ");
         int opcion = 0;
@@ -190,6 +184,10 @@ public class Principal {
         System.out.println();
     }
 
+    //MÉTODO INSERTAR EMPLEADO: SOLICITA LOS DATOS E INSERTA EL EMPLEADO
+    //SE CONTROLA QUE EL EMPLEADO NO EXISTA CON EL DNI, EN CUYO CASO SE MOSTRARÁ MENSAJE DE ERROR
+    //UNA VEZ ESTÉ CREADO EL OBJETO EMPLEADO CON SUS PARÁMETROS, SE HACE STORE PARA GUARDAR LOS CAMBIOS EN LA BD
+    //ADEMÁS SE AÑADE AL ARRAY DE EMPLEADOS CORRESPONDIENTE
     private static void insertaEmpleado(ObjectContainer db, Restaurante nuevo) {
         String nomEmpleado, ap1, ap2, dni, iban;
         double saldo;
@@ -217,6 +215,11 @@ public class Principal {
 
     }
 
+    //MÉTODO INSERTAR PRODUCTO: SOLICITA LOS DATOS E INSERTA EL PRODUCTO
+    //SE CONTROLA QUE EL PRODUCTO NO EXISTA, EN CUYO CASO SE MOSTRARÁ MENSAJE DE ERROR
+    //ADEMÁS SE VERIFICA QUE NO EXISTA 2 VECES EL MISMO EN UN RESTAURANTE
+    //UNA VEZ ESTÉ CREADO EL OBJETO PRODUCTO CON SUS PARÁMETROS, SE HACE STORE PARA GUARDAR LOS CAMBIOS EN LA BD
+    //ADEMÁS, SE AÑADE AL ARRAY DE PRODUCTOS CORRESPONDIENTE
     private static void insertaProducto(ObjectContainer db) {
         String nomRestaurante, nomProducto;
         double precio;
@@ -259,6 +262,11 @@ public class Principal {
         }
     }
 
+    //MÉTODO ASOCIAR EMPLEADO A RESTAURANTE: SOLICITA LOS DATOS E INSERTA EL EMPLEADO
+    //MEDIANTE UN BUCLE Y UNA VARIABLE BOOLEANA, SE PIDE AL USUARIO UN NOMBRE DE UN RESTAURANTE HASTA QUE INSERTE UNO QUE EXISTA
+    //SE CONTROLA QUE EL EMPLEADO NO ESTÉ TRABAJANDO EN OTRO RESTAURANTE CON EL DNI, EN CUYO CASO SE MOSTRARÁ MENSAJE DE ERROR
+    //UNA VEZ ESTÉ CREADO EL OBJETO EMPLEADO CON SUS PARÁMETROS, SE HACE STORE PARA GUARDAR LOS CAMBIOS EN LA BD
+    //POR ÚLTIMO SE ASOCIA AL RESTAURANTE AÑADIÉNDOLO AL ARRAY DE EMPLEADOS CORRESPONDIENTE
     private static void asociarEmpleadoARestaurante(ObjectContainer db) {
         String nomRestaurante, dni;
         boolean restauranteEncontrado = false;
@@ -288,6 +296,12 @@ public class Principal {
         }
     }
 
+    //MÉTODO BÚSQUEDA DE PRODUCTOS: SOLICITA EL NOMBRE DEL RESTAURANTE Y LO BUSCA
+    //SE MOSTRARÁ MENSAJE DE ERROR SI NO EXISTE
+    //EN CASO DE QUE EXISTA, SE SOLICITA LA CADENA POR LA QUE SE VAN A FILTRAR LOS PRODUCTOS
+    //SE OBTIENE UN ARRAY CON LOS PRODUCTOS QUE LA CONTENGAN, SI SU TAMAÑO ES 0 SE MUESTRA MENSAJE DE ERROR
+    //SI NO, SE ORDENA EL ARRAY CON EL SORT (LA CLASE PRODUCTO IMPLEMENTA COMPARABLE, Y EN ELLA HAY UN MÉTODO QUE COMPARA LOS NOMBRES ALFABÉTICAMENTE)
+    //UNA VEZ ORDENADO SE MUESTRA EL ARRAY
     private static void busquedaProductosPorOrdenAlfabetico(ObjectContainer db) {
         String nomRestaurante = solicitarCadena("Introduce el nombre del restaurante: ");
         Restaurante patron = new Restaurante(nomRestaurante);
@@ -312,6 +326,12 @@ public class Principal {
         }
     }
 
+    //MÉTODO BÚSQUEDA DE RESTAURANTE: SOLICITA EL NOMBRE DEL RESTAURANTE Y LO BUSCA
+    //SE MOSTRARÁ MENSAJE DE ERROR SI NO EXISTE
+    //EN CASO DE QUE EXISTA, SE USA EL QUERY CON UN NUEVO PREDICADO QUE CONTIENE EL FILTRO QUE SE DESEA (QUE EXISTA EL RESTAURANTE)
+    //DESPUÉS SE USA EL QUERY COMPARATOR CON EL NÚM DE EMPLEADOS, QUE SE OBTIENE CON EL TAMAÑO DEL ARRAY DE EMPLEADOS DE CADA RESTAURANTE
+    //POR ÚLTIMO, SE ORDENAN LOS RESTAURANTES POR NÚM DE EMPLEADOS
+    //SI EL ARRAY DE EMPLEADOS ESTA VACÍO SE MUESTRA MENSAJE DE ERROR, SINO SE MUESTRAN LOS DATOS
     private static void busquedaRestaurantePorNombre(ObjectContainer db) {
         String cadena = solicitarCadena("Introduce la cadena que va a contener el nombre del restaurante: ");
         ObjectSet<Restaurante> osRestaurante = db.query(new Predicate<>() {
@@ -339,6 +359,12 @@ public class Principal {
 
     }
 
+    //MÉTODO BÚSQUEDA DE EMPLEADO: SOLICITA EL NOMBRE DEL EMPLEADO Y LO BUSCA
+    //SE MOSTRARÁ MENSAJE DE ERROR SI NO EXISTE
+    //EN CASO DE QUE EXISTA, SE USA EL QUERY CON UN NUEVO PREDICADO QUE CONTIENE EL FILTRO QUE SE DESEA (QUE LA CADENA ESTÉ CONTENIDA EN EL NOMBRE)
+    //DESPUÉS SE USA EL QUERY COMPARATOR CON EL SUELDO DE LOS EMPLEADOS, QUE SE OBTIENE ACCEDIENDO AL OBJETO NÓMINA Y DENTRO DE ELLA AL GETSUELDO
+    //POR ÚLTIMO, SE ORDENAN LOS EMPLEADOS POR SU SALARIO
+    //SI EL ARRAY DE EMPLEADOS ESTA VACÍO SE MUESTRA MENSAJE DE ERROR, SINO SE MUESTRAN LOS DATOS
     private static void busquedaEmpleadoPorNombre(ObjectContainer db) {
         String cadenaNombre = solicitarCadena("Introduce la cadena a buscar en el nombre completo del empleado: ");
         ObjectSet<Empleado> osEmpleado = db.query(new Predicate<>() {
@@ -365,6 +391,14 @@ public class Principal {
         }
     }
 
+    //MÉTODO BÚSQUEDA DE EMPLEADO ORDENADOS POR SALARIO EN EL MISMO RESTAURANTE: SOLICITA EL NOMBRE DEL RESTAURANTE Y LO BUSCA
+    //SE MOSTRARÁ MENSAJE DE ERROR SI NO EXISTE
+    //EN CASO DE QUE EXISTA, SE SOLICITAN EL RANGO MÁX Y MÍN DE SALARIO
+    //SE USA EL QUERY CON UN NUEVO PREDICADO QUE CONTIENE EL FILTRO QUE SE DESEA (QUE LOS EMPLEADOS PERTENEZCAN AL MISMO RESTAURANTE Y
+    //QUE SE CUMPLAN LOS RANGOS DEL SALARIO)
+    //DESPUÉS SE USA EL QUERY COMPARATOR CON EL SUELDO DE LOS EMPLEADOS, QUE SE OBTIENE ACCEDIENDO AL OBJETO NÓMINA Y DENTRO DE ELLA AL GETSUELDO
+    //POR ÚLTIMO, SE ORDENAN LOS EMPLEADOS POR SU SALARIO
+    //SI EL ARRAY DE EMPLEADOS ESTA VACÍO SE MUESTRA MENSAJE DE ERROR, SINO SE MUESTRAN LOS DATOS
     private static void busquedaEmpleadoPertenecientesAlMismoBarOrdenadosPorSalario(ObjectContainer db) {
         String nomRestaurante = solicitarCadena("Nombre restaurante: ");
 
